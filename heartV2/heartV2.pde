@@ -2,7 +2,7 @@ import processing.serial.*;
 
 Serial myPort; // シリアル通信用のオブジェクトを宣言
 
-int distance = 0; // 受信した距離データを保持する変数
+int distance = 0; // 受信したパルスデータを保持する変数
 int fadeOutFrames = 200; // フェードアウトにかけるフレーム数（時間）
 int frames = 0; // 現在のフレーム数
 
@@ -42,8 +42,8 @@ void draw() {
 
 // 背景に動的な形状を描画する関数
 void drawDynamicBackground() {
-  float numShapes = map(distance, 0, 1023, 1, 100); // 距離データに応じて描画する形状の数を決定
-  float shapeSize = map(distance, 0, 1023, 5, 50); // 距離データに応じて形状のサイズを決定
+  float numShapes = map(distance, 0, 1023, 1, 100); // パルスデータに応じて描画する形状の数を決定
+  float shapeSize = map(distance, 0, 1023, 5, 50); // パルスデータに応じて形状のサイズを決定
   float opacity = map(frames, 0, fadeOutFrames, 255, 0); // フェードアウトに合わせて透明度を計算
 
   if (frames >= fadeOutFrames) {
@@ -103,12 +103,12 @@ void serialEvent(Serial port) {
   }
 }
 
-// 受信した距離データを格納する関数
+// 受信したパルスデータを格納する関数
 void receiveValue(int distanceValue) {
-  // 受信した距離データをグローバル変数に格納
+  // 受信したパルスデータをグローバル変数に格納
   distance = distanceValue;
   frames = 0; // フレーム数をリセットしてフェードアウトを始める
 
-  // コンソールに受信した距離データを表示
+  // コンソールに受信したパルスデータを表示
   println("Received distance value: " + distanceValue);
 }
