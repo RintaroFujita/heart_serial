@@ -36,6 +36,36 @@ void draw() {
     }
     drawWave(distance, frames); // 波紋の描画
   }
+
+  // 背景の動的な形状を描画
+  drawDynamicBackground();
+}
+void drawDynamicBackground() {
+  float numShapes = map(distance, 0, 1023, 1, 100); // 距離データに応じて描画する形状の数を決定
+  float shapeSize = map(distance, 0, 1023, 5, 50); // 距離データに応じて形状のサイズを決定
+  float opacity = map(frames, 0, fadeOutFrames, 255, 0); // フェードアウトに合わせて透明度を計算
+
+  if (frames >= fadeOutFrames) {
+    return; // If frames reach the fadeOutFrames limit, stop drawing the ellipses
+  }
+
+  for (int i = 0; i < numShapes; i++) {
+    float x = random(width);
+    float y = random(height);
+    float hue = 200; // Green color (hue = 200)
+    float saturation = 255; // Maximum saturation for a bright color
+    float brightness = random(70, 90); // Random brightness between 90 and 100
+    float ellipseWidth = shapeSize * 1; // Increase this value to elongate the ellipses further
+
+    pushMatrix(); // Save the current transformation matrix
+    translate(x, y); // Translate the origin to the ellipse's position
+    rotate(random(TWO_PI)); // Set a random rotation angle
+
+    fill(hue, saturation, brightness, opacity); // Use opacity for fade-out effect
+    ellipse(0, 0, ellipseWidth, shapeSize); // Draw the elongated ellipse (width is 4 times the height)
+
+    popMatrix(); // Restore the previous transformation matrix
+  }
 }
 
 
