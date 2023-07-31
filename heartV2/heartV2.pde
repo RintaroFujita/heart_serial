@@ -1,15 +1,14 @@
 import processing.serial.*;
 
-Serial myPort; // Declare the Serial object
+Serial myPort; // シリアル通信用のオブジェクトを宣言
 
 int distance = 0; // 受信した距離データを保持する変数
 int fadeOutFrames = 200; // フェードアウトにかけるフレーム数（時間）
 int frames = 0; // 現在のフレーム数
 
-
 void setup() {
   // シリアルポートを開く
-  String portName = "/dev/cu.usbmodem11101"; // Arduinoが接続されているポート名を指定
+  String portName = "/dev/cu.usbmodem11101"; // Arduinoが接続されているポート名を指定（適宜変更してください）
   myPort = new Serial(this, portName, 9600);
   myPort.bufferUntil('\n'); // 改行文字を受信するまでバッファリング
 
@@ -19,17 +18,17 @@ void setup() {
 }
 
 void draw() {
-  background(0, 0, 0);
+  background(0, 0, 0); // 背景を黒で塗りつぶす
 
   // 中心の円を描画
-  fill(255);
-  ellipse(width / 2, height / 2, 15, 15);
+  fill(255); // 白で塗りつぶす
+  ellipse(width / 2, height / 2, 15, 15); // 中心の円を描く
 
   // 距離データが受信された場合に波紋を描画
   if (distance != 0) {
     // フェードアウトが完了したら距離データをリセット
     if (frames >= fadeOutFrames) {
-      distance = 0;
+      distance = 0; // 距離データをリセット
       frames = 0; // フレーム数をリセット
     } else {
       frames++; // フレーム数を増やす
@@ -40,34 +39,35 @@ void draw() {
   // 背景の動的な形状を描画
   drawDynamicBackground();
 }
+
+// 背景に動的な形状を描画する関数
 void drawDynamicBackground() {
   float numShapes = map(distance, 0, 1023, 1, 100); // 距離データに応じて描画する形状の数を決定
   float shapeSize = map(distance, 0, 1023, 5, 50); // 距離データに応じて形状のサイズを決定
   float opacity = map(frames, 0, fadeOutFrames, 255, 0); // フェードアウトに合わせて透明度を計算
 
   if (frames >= fadeOutFrames) {
-    return; // If frames reach the fadeOutFrames limit, stop drawing the ellipses
+    return; // フェードアウトが完了したら何もせずに関数を終了
   }
 
   for (int i = 0; i < numShapes; i++) {
     float x = random(width);
     float y = random(height);
-    float hue = 200; // Green color (hue = 200)
-    float saturation = 255; // Maximum saturation for a bright color
-    float brightness = random(70, 90); // Random brightness between 90 and 100
-    float ellipseWidth = shapeSize * 1; // Increase this value to elongate the ellipses further
+    float hue = 200; // 緑色（hue = 200）
+    float saturation = 255; // 鮮やかな色のための最大彩度
+    float brightness = random(70, 90); // 90から100の間のランダムな明るさ
+    float ellipseWidth = shapeSize * 1; // この値を大きくすると楕円形がより細長くなる
 
-    pushMatrix(); // Save the current transformation matrix
-    translate(x, y); // Translate the origin to the ellipse's position
-    rotate(random(TWO_PI)); // Set a random rotation angle
+    pushMatrix(); // 現在の変換行列を保存
+    translate(x, y); // 原点を楕円形の位置に移動
+    rotate(random(TWO_PI)); // ランダムな回転角度を設定
 
-    fill(hue, saturation, brightness, opacity); // Use opacity for fade-out effect
-    ellipse(0, 0, ellipseWidth, shapeSize); // Draw the elongated ellipse (width is 4 times the height)
+    fill(hue, saturation, brightness, opacity); // フェードアウト効果を考慮した色を指定
+    ellipse(0, 0, ellipseWidth, shapeSize); // 細長い楕円形を描画（幅は高さの何倍かを調整）
 
-    popMatrix(); // Restore the previous transformation matrix
+    popMatrix(); // 前の変換行列に戻す
   }
 }
-
 
 // 波紋を描画する関数
 void drawWave(int distance, int frames) {
@@ -81,8 +81,8 @@ void drawWave(int distance, int frames) {
 
   while (angle < TWO_PI) {
     // 波紋の中心からの位置を計算
-    float x = width / 2 + cos(angle) * r; // 中心からx座標を計算
-    float y = height / 2 + sin(angle) * r; // 中心からy座標を計算
+    float x = width / 2 + cos(angle) * r; // x座標を計算
+    float y = height / 2 + sin(angle) * r; // y座標を計算
 
     // フェードアウトに合わせて透明度を計算
     float opacity = map(frames, 0, fadeOutFrames, 255, 0);
@@ -91,9 +91,6 @@ void drawWave(int distance, int frames) {
     angle += increment;
   }
 }
-
-
-
 
 // Arduinoからのデータ受信時に呼び出される関数
 void serialEvent(Serial port) {
